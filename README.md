@@ -36,7 +36,9 @@ Edit `environment` in [drifter.compose.yaml](drifter.compose.yaml) and run:
 docker compose -f drifter.compose.yaml up -d
 ```
 
-Image: [`sedyh/remna-traffic-drifter-bot`](https://hub.docker.com/r/sedyh/remna-traffic-drifter-bot). State and Telegram update offset are stored in the `/data` volume (defaults: `STATE_PATH`, `TELEGRAM_OFFSET_PATH`).
+Image on [Docker Hub](https://hub.docker.com/r/sedyh/remna-traffic-drifter-bot): `sedyh/remna-traffic-drifter-bot`.
+
+Persistent data is stored in the `/data` volume (`STATE_PATH`, `TELEGRAM_OFFSET_PATH` by default).
 
 ### Required variables
 
@@ -46,7 +48,7 @@ Image: [`sedyh/remna-traffic-drifter-bot`](https://hub.docker.com/r/sedyh/remna-
 | `PANEL_TOKEN` | API bearer token |
 | `TELEGRAM_BOT_TOKEN` | Telegram bot token |
 | `TELEGRAM_CHAT_IDS` | Comma-separated chat IDs; use `chat_id:topic_id` for forum topics |
-| `TAG_RULES` | - | Per-tag rules: `TAG:STRATEGY` or `TAG:STRATEGY:STALE` (comma-separated) |
+| `TAG_RULES` | Per-tag rules: `TAG:STRATEGY` or `TAG:STRATEGY:STALE` (comma-separated) |
 
 `TAG_RULES` examples:
 
