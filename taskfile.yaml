@@ -1,0 +1,24 @@
+version: '3'
+
+vars:
+  IMAGE_REPO: sedyh/remna-traffic-drifter-bot
+  IMAGE_TAG: latest
+  BIN: build/traffic_drifter
+  DOCKERFILE: run.dockerfile
+
+tasks:
+  build:
+    cmds:
+      - go build -o {{.BIN}} ./cmd/traffic_drifter
+
+  test:
+    cmds:
+      - go test ./...
+
+  image:
+    cmds:
+      - docker build -f {{.DOCKERFILE}} -t {{.IMAGE_REPO}}:{{.IMAGE_TAG}} .
+
+  image-push:
+    cmds:
+      - docker buildx build -f {{.DOCKERFILE}} --platform linux/amd64,linux/arm64 --push -t {{.IMAGE_REPO}}:{{.IMAGE_TAG}} .

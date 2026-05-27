@@ -1,0 +1,27 @@
+name: Update DockerHub Description
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - README.md
+      - .github/workflows/dockerhub-readme.yaml
+
+jobs:
+  push-container-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Push README to Docker Hub
+        uses: christian-korneck/update-container-description-action@v1
+        env:
+          DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASS: ${{ secrets.DOCKERHUB_TOKEN }}
+        with:
+          destination_container_repo: sedyh/remna-traffic-drifter-bot
+          provider: dockerhub
+          short_description: "Remnawave traffic reset monitor with Telegram alerts"
+          readme_file: README.md

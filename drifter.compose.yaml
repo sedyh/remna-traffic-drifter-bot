@@ -1,0 +1,16 @@
+services:
+  traffic-drifter:
+    image: sedyh/remna-traffic-drifter-bot:latest
+    container_name: traffic-drifter
+    restart: unless-stopped
+    environment:
+      PANEL_URL: https://panel.example.com
+      PANEL_TOKEN: xxx
+      TELEGRAM_BOT_TOKEN: xxx
+      TELEGRAM_CHAT_IDS: -1001234567890:289
+      TAG_RULES: TAG_TARIFF_MIN:MONTH:35d,TAG_TARRIF_PRO:MONTH:35d
+    volumes:
+      - traffic-drifter-data:/data
+
+volumes:
+  traffic-drifter-data:
