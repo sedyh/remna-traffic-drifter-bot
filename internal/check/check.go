@@ -17,7 +17,7 @@ const (
 
 type Issue struct {
 	Kind             string
-	UUID             string
+	UserID           int64
 	Username         string
 	Tag              string
 	Status           string
@@ -62,7 +62,7 @@ func Run(users []panel.User, opt Options) []Issue {
 		if strategy != expected {
 			issues = append(issues, Issue{
 				Kind:             IssueWrongStrategy,
-				UUID:             u.UUID,
+				UserID:           u.ID,
 				Username:         u.Username,
 				Tag:              tag,
 				Status:           meta.status,
@@ -89,7 +89,7 @@ func Run(users []panel.User, opt Options) []Issue {
 			}
 			issues = append(issues, Issue{
 				Kind:             IssueStaleReset,
-				UUID:             u.UUID,
+				UserID:           u.ID,
 				Username:         u.Username,
 				Tag:              tag,
 				Status:           meta.status,
@@ -108,7 +108,7 @@ func Run(users []panel.User, opt Options) []Issue {
 			reset := lastReset
 			issues = append(issues, Issue{
 				Kind:             IssueStaleReset,
-				UUID:             u.UUID,
+				UserID:           u.ID,
 				Username:         u.Username,
 				Tag:              tag,
 				Status:           meta.status,

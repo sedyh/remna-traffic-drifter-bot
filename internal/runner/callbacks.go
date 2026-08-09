@@ -62,7 +62,7 @@ func (r *Runner) handleCallback(ctx context.Context, allowed map[string]struct{}
 		return
 	}
 
-	action, uuid, err := notify.DecodeCallback(cq.Data)
+	action, userID, err := notify.DecodeCallback(cq.Data)
 	if err != nil {
 		r.notify.AnswerCallback(ctx, cq.ID, "Invalid button")
 		return
@@ -71,13 +71,13 @@ func (r *Runner) handleCallback(ctx context.Context, allowed map[string]struct{}
 	var expected string
 	switch action {
 	case notify.CallbackFix, "s", "r":
-		user, getErr := r.panel.GetUser(ctx, uuid)
+		user, getErr := r.panel.GetUser(ctx, userID)
 		if getErr != nil {
 			r.notify.AnswerCallback(ctx, cq.ID, "Panel error: "+truncateErr(getErr))
 			return
 		}
 		expected = r.expectedStrategy(user)
-		err = r.panel.FixUser(ctx, uuid, expected)
+		err = r.panel.FixUser(ctx, userID, expected)
 	default:
 		r.notify.AnswerCallback(ctx, cq.ID, "Unknown action")
 		return
@@ -86,15 +86,15 @@ func (r *Runner) handleCallback(ctx context.Context, allowed map[string]struct{}
 	done := expected + " + reset"
 
 	if err != nil {
-		r.log.Error("panel fix failed", "uuid", uuid, "action", action, "err", err)
+		r.log.Error("panel fix failed", "user_id", userID, "action", action, "err", err)
 		r.notify.AnswerCallback(ctx, cq.ID, "Panel error: "+truncateErr(err))
 		return
 	}
 
-	user, err := r.panel.GetUser(ctx, uuid)
+	user, err := r.panel.GetUser(ctx, userID)
 	if err != nil {
 		r.notify.AnswerCallback(ctx, cq.ID, "✅ "+done+" (panel refresh failed)")
-		r.log.Warn("panel get user after fix", "uuid", uuid, "err", err)
+		r.log.Warn("panel get user after fix", "user_id", userID, "err", err)
 		return
 	}
 
@@ -103,13 +103,13 @@ func (r *Runner) handleCallback(ctx context.Context, allowed map[string]struct{}
 
 	html := notify.FormatMessageAfterFix(cq.Message.Text, user, r.expectedStrategy(user), r.staleAfterFor(user), r.cfg.PanelURL)
 	if err := r.notify.EditMessageAfterFix(ctx, chatID, cq.Message.MessageID, html); err != nil {
-		r.log.Error("telegram edit message", "uuid", uuid, "err", err)
+		r.log.Error("telegram edit message", "user_id", userID, "err", err)
 		r.notify.AnswerCallback(ctx, cq.ID, "✅ "+done+" (message edit failed)")
 		return
 	}
 
 	r.notify.AnswerCallback(ctx, cq.ID, "✅ Fix: "+done)
-	r.log.Info("panel fix applied", "uuid", uuid, "action", action, "user", user.Username)
+	r.log.Info("panel fix applied", "user_id", userID, "action", action, "user", user.Username)
 }
 
 func truncateErr(err error) string {

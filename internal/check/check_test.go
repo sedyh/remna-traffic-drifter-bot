@@ -53,7 +53,7 @@ func TestStaleAfterForUsesPerTagThreshold(t *testing.T) {
 func TestRunWrongStrategy(t *testing.T) {
 	now := time.Date(2026, 5, 26, 12, 0, 0, 0, time.UTC)
 	users := []panel.User{{
-		UUID:                 "uuid-1",
+		ID:                   1,
 		Username:             "VPN-1",
 		Status:               "ACTIVE",
 		Tag:                  testWatchedTag,
@@ -76,7 +76,7 @@ func TestRunStaleResetOldAccount(t *testing.T) {
 	now := time.Date(2026, 5, 26, 12, 0, 0, 0, time.UTC)
 	created := now.Add(-43 * 24 * time.Hour)
 	users := []panel.User{{
-		UUID:                 "uuid-2",
+		ID:                   2,
 		Username:             "VPN-662044",
 		Status:               "ACTIVE",
 		Tag:                  testWatchedTag,

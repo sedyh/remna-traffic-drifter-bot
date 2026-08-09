@@ -4,6 +4,8 @@
 
 [![DockerHub](https://img.shields.io/badge/DockerHub-remna--traffic--drifter--bot-blue?style=for-the-badge)](https://hub.docker.com/r/sedyh/remna-traffic-drifter-bot)
 
+Requires **Remnawave Panel 3.x** (users addressed by numeric `id`, not `uuid`).
+
 Background monitor for Remnawave: polls the panel API and sends Telegram alerts when paid users have the wrong traffic reset strategy or have not had a calendar reset for too long.
 
 Expected strategy and stale-reset threshold are configured per tariff tag in `TAG_RULES`.

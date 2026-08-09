@@ -2,6 +2,7 @@ package notify
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/sedyh/remna-traffic-drifter-bot/internal/check"
@@ -18,20 +19,24 @@ type inlineKeyboard struct {
 	InlineKeyboard [][]inlineButton `json:"inline_keyboard"`
 }
 
-func EncodeCallback(action, uuid string) string {
-	return action + ":" + uuid
+func EncodeCallback(action string, userID int64) string {
+	return action + ":" + strconv.FormatInt(userID, 10)
 }
 
-func DecodeCallback(data string) (action, uuid string, err error) {
+func DecodeCallback(data string) (action string, userID int64, err error) {
 	parts := strings.SplitN(data, ":", 2)
 	if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
-		return "", "", fmt.Errorf("invalid callback data")
+		return "", 0, fmt.Errorf("invalid callback data")
 	}
-	return parts[0], parts[1], nil
+	id, err := strconv.ParseInt(parts[1], 10, 64)
+	if err != nil || id <= 0 {
+		return "", 0, fmt.Errorf("invalid callback user id")
+	}
+	return parts[0], id, nil
 }
 
 func issueKeyboard(i check.Issue) *inlineKeyboard {
-	if strings.TrimSpace(i.UUID) == "" {
+	if i.UserID == 0 {
 		return nil
 	}
 	switch i.Kind {
@@ -39,7 +44,7 @@ func issueKeyboard(i check.Issue) *inlineKeyboard {
 		return &inlineKeyboard{InlineKeyboard: [][]inlineButton{{
 			{
 				Text:         "Fix → " + i.ExpectedStrategy,
-				CallbackData: EncodeCallback(CallbackFix, i.UUID),
+				CallbackData: EncodeCallback(CallbackFix, i.UserID),
 			},
 		}}}
 	default:

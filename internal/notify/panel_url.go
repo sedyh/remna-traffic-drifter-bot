@@ -1,18 +1,20 @@
 package notify
 
-import "strings"
+import (
+	"strconv"
+	"strings"
+)
 
-func UserAdminURL(panelBase, uuid string) string {
+func UserAdminURL(panelBase string, userID int64) string {
 	base := strings.TrimSuffix(strings.TrimSpace(panelBase), "/")
-	uuid = strings.TrimSpace(uuid)
-	if base == "" || uuid == "" {
+	if base == "" || userID == 0 {
 		return ""
 	}
-	return base + "/dashboard/management/users?user=" + uuid
+	return base + "/dashboard/management/users?user=" + strconv.FormatInt(userID, 10)
 }
 
-func formatSubLine(username, uuid, panelBase string) string {
-	if href := UserAdminURL(panelBase, uuid); href != "" {
+func formatSubLine(username string, userID int64, panelBase string) string {
+	if href := UserAdminURL(panelBase, userID); href != "" {
 		return `💳 Sub: <a href="` + escapeHTML(href) + `">` + escapeHTML(username) + `</a>`
 	}
 	return "💳 Sub: " + escapeHTML(username)

@@ -7,11 +7,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 )
 
-func (c *Client) SetTrafficLimitStrategy(ctx context.Context, uuid, strategy string) error {
-	body, err := json.Marshal(map[string]string{
-		"uuid":                 uuid,
+func (c *Client) SetTrafficLimitStrategy(ctx context.Context, userID int64, strategy string) error {
+	body, err := json.Marshal(map[string]any{
+		"id":                   userID,
 		"trafficLimitStrategy": strategy,
 	})
 	if err != nil {
@@ -20,19 +21,19 @@ func (c *Client) SetTrafficLimitStrategy(ctx context.Context, uuid, strategy str
 	return c.request(ctx, http.MethodPatch, c.baseURL+"/api/users", body)
 }
 
-func (c *Client) ResetTraffic(ctx context.Context, uuid string) error {
-	return c.request(ctx, http.MethodPost, c.baseURL+"/api/users/"+uuid+"/actions/reset-traffic", nil)
+func (c *Client) ResetTraffic(ctx context.Context, userID int64) error {
+	return c.request(ctx, http.MethodPost, c.baseURL+"/api/users/"+strconv.FormatInt(userID, 10)+"/actions/reset-traffic", nil)
 }
 
-func (c *Client) FixUser(ctx context.Context, uuid, strategy string) error {
-	if err := c.SetTrafficLimitStrategy(ctx, uuid, strategy); err != nil {
+func (c *Client) FixUser(ctx context.Context, userID int64, strategy string) error {
+	if err := c.SetTrafficLimitStrategy(ctx, userID, strategy); err != nil {
 		return err
 	}
-	return c.ResetTraffic(ctx, uuid)
+	return c.ResetTraffic(ctx, userID)
 }
 
-func (c *Client) GetUser(ctx context.Context, uuid string) (User, error) {
-	raw, err := c.requestBytes(ctx, http.MethodGet, c.baseURL+"/api/users/"+uuid, nil)
+func (c *Client) GetUser(ctx context.Context, userID int64) (User, error) {
+	raw, err := c.requestBytes(ctx, http.MethodGet, c.baseURL+"/api/users/"+strconv.FormatInt(userID, 10), nil)
 	if err != nil {
 		return User{}, err
 	}

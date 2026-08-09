@@ -11,7 +11,7 @@ import (
 
 type issueFields struct {
 	username         string
-	uuid             string
+	userID           int64
 	panelBase        string
 	tag              string
 	status           string
@@ -36,7 +36,7 @@ func formatPanelSnapshot(u panel.User, expectedStrategy string, staleAfter time.
 	strategy := strings.TrimSpace(u.TrafficLimitStrategy)
 	lines := []string{
 		"✅ Panel now",
-		formatSubLine(u.Username, u.UUID, panelBase),
+		formatSubLine(u.Username, u.ID, panelBase),
 		"🧩 Strategy: " + escapeHTML(formatStrategy(strategy)),
 		"🧩 Expected: " + escapeHTML(formatStrategy(expectedStrategy)),
 	}

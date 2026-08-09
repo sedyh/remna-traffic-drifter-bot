@@ -98,7 +98,7 @@ func formatStrategy(s string) string {
 func formatIssueFromCheck(i check.Issue, panelBase string) string {
 	return formatIssueLines(i.Kind, issueFields{
 		username:         i.Username,
-		uuid:             i.UUID,
+		userID:           i.UserID,
 		panelBase:        panelBase,
 		tag:              i.Tag,
 		status:           i.Status,
@@ -122,7 +122,7 @@ func formatIssueLines(kind string, i issueFields) string {
 
 	lines := []string{
 		title,
-		formatSubLine(i.username, i.uuid, i.panelBase),
+		formatSubLine(i.username, i.userID, i.panelBase),
 		"🏷 Tariff tag: " + escapeHTML(i.tag),
 	}
 	if i.status != "" {

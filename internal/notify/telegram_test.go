@@ -30,7 +30,7 @@ func TestSendMessageReqThreadID(t *testing.T) {
 func TestFormatIssueWrongStrategy(t *testing.T) {
 	msg := formatIssueFromCheck(check.Issue{
 		Kind:             check.IssueWrongStrategy,
-		UUID:             "550e8400-e29b-41d4-a716-446655440000",
+		UserID:           42,
 		Username:         "VPN-123059",
 		Tag:              "TAG_TARIFF_MIN",
 		ActualStrategy:   "NO_RESET",
@@ -45,7 +45,7 @@ func TestFormatIssueWrongStrategy(t *testing.T) {
 	if !strings.Contains(msg, "🏷 Tariff tag: TAG_TARIFF_MIN") {
 		t.Fatalf("unexpected: %s", msg)
 	}
-	if !strings.Contains(msg, `href="https://panel.example.com/dashboard/management/users?user=550e8400-e29b-41d4-a716-446655440000"`) {
+	if !strings.Contains(msg, `href="https://panel.example.com/dashboard/management/users?user=42"`) {
 		t.Fatalf("want panel link, got: %s", msg)
 	}
 }
@@ -55,7 +55,7 @@ func TestFormatIssueStaleReset(t *testing.T) {
 	reset := now.Add(-72 * time.Hour)
 	msg := formatIssueFromCheck(check.Issue{
 		Kind:             check.IssueStaleReset,
-		UUID:             "550e8400-e29b-41d4-a716-446655440000",
+		UserID:           42,
 		Username:         "VPN-123059",
 		Tag:              "TAG_TARIFF_MIN",
 		ActualStrategy:   "MONTH",

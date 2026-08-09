@@ -12,7 +12,7 @@ func TestFormatMessageAfterFix(t *testing.T) {
 	original := "⚠️ Drift: Wrong reset strategy\n💳 Sub: VPN-1\n🧩 Strategy: NO_RESET"
 	reset := time.Date(2026, 5, 26, 12, 0, 0, 0, time.UTC)
 	u := panel.User{
-		UUID:                 "550e8400-e29b-41d4-a716-446655440000",
+		ID:                   42,
 		Username:             "VPN-1",
 		TrafficLimitStrategy: "MONTH",
 		LastTrafficResetAt:   &reset,
@@ -28,7 +28,7 @@ func TestFormatMessageAfterFix(t *testing.T) {
 	if !strings.Contains(html, "🧩 Strategy: MONTH") {
 		t.Fatalf("want updated strategy, got: %s", html)
 	}
-	if !strings.Contains(html, "dashboard/management/users?user=550e8400") {
+	if !strings.Contains(html, "dashboard/management/users?user=42") {
 		t.Fatalf("want panel link, got: %s", html)
 	}
 }

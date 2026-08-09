@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -36,7 +37,7 @@ type internalSquad struct {
 }
 
 type User struct {
-	UUID                   string          `json:"uuid"`
+	ID                     int64           `json:"id"`
 	Username               string          `json:"username"`
 	Status                 string          `json:"status"`
 	Tag                    string          `json:"tag"`
@@ -46,6 +47,13 @@ type User struct {
 	LastTrafficResetAt     *time.Time      `json:"lastTrafficResetAt"`
 	UserTraffic            *UserTraffic    `json:"userTraffic"`
 	ActiveInternalSquads   []internalSquad `json:"activeInternalSquads"`
+}
+
+func (u User) IDString() string {
+	if u.ID == 0 {
+		return ""
+	}
+	return strconv.FormatInt(u.ID, 10)
 }
 
 func (u User) SquadNames() string {
