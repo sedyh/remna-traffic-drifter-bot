@@ -6,7 +6,7 @@
 
 Requires **Remnawave Panel 3.x** (users addressed by numeric `id`, not `uuid`).
 
-Background monitor for Remnawave: polls the panel API and sends Telegram alerts when paid users have the wrong traffic reset strategy or have not had a monthly reset for too long.
+Background monitor for Remnawave: polls the panel API and sends Telegram alerts when paid users have the wrong traffic reset strategy or have not had a scheduled reset for too long.
 
 Expected strategy and stale-reset threshold are configured per tariff tag in `TAG_RULES`.
 
@@ -17,7 +17,7 @@ Polls `GET /api/users` (paginated).
 | Type | Condition |
 |------|-----------|
 | `wrong_strategy` | `trafficLimitStrategy` does not match the strategy from `TAG_RULES` for the user tag |
-| `stale_reset` | expected strategy is `MONTH` or `MONTH_ROLLING`, traffic was used, but `lastTrafficResetAt` is empty or older than the stale threshold |
+| `stale_reset` | expected strategy is `MONTH`, `MONTH_ROLLING` or `DAY`, traffic was used, but `lastTrafficResetAt` is empty or older than the stale threshold |
 
 Filters:
 
@@ -59,7 +59,7 @@ Persistent data is stored in the `/data` volume (`STATE_PATH`, `TELEGRAM_OFFSET_
 - `MAX:NO_RESET` - expect `NO_RESET`, no stale-reset checks
 - `TAG_TARIFF_MID:MONTH_ROLLING:35d` - expect a reset on the user's creation day every month
 
-Strategies: `MONTH`, `MONTH_ROLLING`, `NO_RESET`. Stale accepts Go durations (`35d`, `720h`).
+Strategies: `MONTH`, `MONTH_ROLLING`, `DAY`, `NO_RESET`. Stale accepts Go durations (`35d`, `720h`).
 
 ### Optional variables
 

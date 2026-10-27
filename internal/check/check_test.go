@@ -220,3 +220,28 @@ func TestRunSkipsTrialTag(t *testing.T) {
 		t.Fatalf("want no issues for TRIAL, got %+v", issues)
 	}
 }
+
+func TestRunStaleResetDay(t *testing.T) {
+	now := time.Date(2026, 5, 26, 12, 0, 0, 0, time.UTC)
+	created := now.Add(-10 * 24 * time.Hour)
+	lastReset := now.Add(-30 * time.Hour)
+	users := []panel.User{{
+		ID:                   5,
+		Username:             "VPN-daily",
+		Status:               "ACTIVE",
+		Tag:                  testWatchedTag,
+		TrafficLimitBytes:    50 * 1024 * 1024 * 1024,
+		TrafficLimitStrategy: "DAY",
+		CreatedAt:            &created,
+		LastTrafficResetAt:   &lastReset,
+		UserTraffic:          trafficUsed(1024),
+	}}
+
+	issues := Run(users, testOptions(now, func(o *Options) {
+		o.TagRules[testWatchedTag] = TagRule{Strategy: StrategyDay, StaleAfter: 25 * time.Hour}
+	}))
+
+	if len(issues) != 1 || issues[0].Kind != IssueStaleReset {
+		t.Fatalf("unexpected issues: %+v", issues)
+	}
+}

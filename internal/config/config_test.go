@@ -88,6 +88,16 @@ func TestParseMonthRollingRules(t *testing.T) {
 	}
 }
 
+func TestParseDayRule(t *testing.T) {
+	rules, err := parseTagRules("SUB_MIN:DAY:25h")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if rules["SUB_MIN"].Strategy != "DAY" || rules["SUB_MIN"].StaleAfter != 25*time.Hour {
+		t.Fatalf("SUB_MIN: %+v", rules["SUB_MIN"])
+	}
+}
+
 func TestParseUnknownStrategy(t *testing.T) {
 	if _, err := parseUntaggedRule("WEEK"); err == nil {
 		t.Fatal("want error for unsupported strategy")

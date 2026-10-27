@@ -13,13 +13,18 @@ const (
 
 	StrategyMonth        = "MONTH"
 	StrategyMonthRolling = "MONTH_ROLLING"
+	StrategyDay          = "DAY"
 	StrategyNoReset      = "NO_RESET"
 )
 
-// ResetsMonthly reports whether the panel resets traffic once a month:
-// on the 1st for MONTH, on the user's creation day for MONTH_ROLLING.
-func ResetsMonthly(strategy string) bool {
-	return strategy == StrategyMonth || strategy == StrategyMonthRolling
+// HasScheduledReset reports whether the panel resets traffic on a schedule:
+// daily for DAY, on the 1st for MONTH, on the user's creation day for MONTH_ROLLING.
+func HasScheduledReset(strategy string) bool {
+	switch strategy {
+	case StrategyMonth, StrategyMonthRolling, StrategyDay:
+		return true
+	}
+	return false
 }
 
 type Issue struct {
@@ -82,7 +87,7 @@ func Run(users []panel.User, opt Options) []Issue {
 			continue
 		}
 
-		if !ResetsMonthly(strategy) {
+		if !HasScheduledReset(strategy) {
 			continue
 		}
 
