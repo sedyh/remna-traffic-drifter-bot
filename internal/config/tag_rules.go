@@ -93,7 +93,7 @@ func parseUntaggedRule(raw string) (check.TagRule, error) {
 
 func validateStrategy(strategy string) error {
 	switch strategy {
-	case check.StrategyMonth, check.StrategyNoReset:
+	case check.StrategyMonth, check.StrategyMonthRolling, check.StrategyNoReset:
 		return nil
 	default:
 		return fmt.Errorf("unknown strategy %q", strategy)

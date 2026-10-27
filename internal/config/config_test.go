@@ -70,3 +70,26 @@ func TestParseUntaggedRule(t *testing.T) {
 		t.Fatalf("unexpected: %+v", rule)
 	}
 }
+
+func TestParseMonthRollingRules(t *testing.T) {
+	rules, err := parseTagRules("MIN_SUB:MONTH_ROLLING:35d")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if rules["MIN_SUB"].Strategy != "MONTH_ROLLING" || rules["MIN_SUB"].StaleAfter != 35*24*time.Hour {
+		t.Fatalf("MIN_SUB: %+v", rules["MIN_SUB"])
+	}
+	rule, err := parseUntaggedRule("month_rolling")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if rule.Strategy != "MONTH_ROLLING" {
+		t.Fatalf("unexpected: %+v", rule)
+	}
+}
+
+func TestParseUnknownStrategy(t *testing.T) {
+	if _, err := parseUntaggedRule("WEEK"); err == nil {
+		t.Fatal("want error for unsupported strategy")
+	}
+}

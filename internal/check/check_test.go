@@ -117,6 +117,52 @@ func TestRunStaleResetSkipsNewAccount(t *testing.T) {
 	}
 }
 
+func TestRunStaleResetMonthRolling(t *testing.T) {
+	now := time.Date(2026, 5, 26, 12, 0, 0, 0, time.UTC)
+	created := now.Add(-90 * 24 * time.Hour)
+	lastReset := now.Add(-40 * 24 * time.Hour)
+	users := []panel.User{{
+		ID:                   3,
+		Username:             "VPN-rolling",
+		Status:               "ACTIVE",
+		Tag:                  testWatchedTag,
+		TrafficLimitBytes:    100 * 1024 * 1024 * 1024,
+		TrafficLimitStrategy: "MONTH_ROLLING",
+		CreatedAt:            &created,
+		LastTrafficResetAt:   &lastReset,
+		UserTraffic:          trafficUsed(1024),
+	}}
+
+	issues := Run(users, testOptions(now, func(o *Options) {
+		o.TagRules[testWatchedTag] = TagRule{Strategy: StrategyMonthRolling, StaleAfter: 35 * 24 * time.Hour}
+	}))
+
+	if len(issues) != 1 || issues[0].Kind != IssueStaleReset {
+		t.Fatalf("unexpected issues: %+v", issues)
+	}
+}
+
+func TestRunMonthWhenRollingExpected(t *testing.T) {
+	now := time.Date(2026, 5, 26, 12, 0, 0, 0, time.UTC)
+	users := []panel.User{{
+		ID:                   4,
+		Username:             "VPN-calendar",
+		Status:               "ACTIVE",
+		TrafficLimitBytes:    100 * 1024 * 1024 * 1024,
+		TrafficLimitStrategy: "MONTH",
+		UserTraffic:          trafficUsed(1024),
+	}}
+
+	issues := Run(users, testOptions(now, func(o *Options) {
+		o.WatchUntaggedLimited = true
+		o.UntaggedRule = TagRule{Strategy: StrategyMonthRolling}
+	}))
+
+	if len(issues) != 1 || issues[0].Kind != IssueWrongStrategy || issues[0].ExpectedStrategy != StrategyMonthRolling {
+		t.Fatalf("unexpected issues: %+v", issues)
+	}
+}
+
 func TestRunSkipsUnlimited(t *testing.T) {
 	now := time.Date(2026, 5, 26, 12, 0, 0, 0, time.UTC)
 	users := []panel.User{{
